@@ -94,7 +94,7 @@ class CompareLists {
     return max;
   }
 
-  void testMaximum(Tester t) {
+  void testMaximumList(Tester t) {
     List<Integer> Ilst1 = Arrays.asList(1,2,3,3); 
     List<Integer> Ilst2 = Arrays.asList();
     List<Integer> Ilst3 = Arrays.asList(1,2,3,-1,-2,-3,4); 
@@ -126,4 +126,188 @@ class CompareLists {
     t.checkExpect(maximum(Blst4, booleanComparator), true);
   }
 
+  <E> E maximum(E[] arr, Comparator<E> comparator) {
+    if (arr.length < 1) {
+      return null;
+    }
+
+    E max = arr[0];
+
+    for (E elem : arr) {
+      if (comparator.compare(elem, max) > 0) {
+        max = elem;
+      }
+    }
+    return max;
+  }
+
+  void testMaximumArray(Tester t) {
+    Integer[] intArr1 = {1, 2, 3, 3};
+    Integer[] intArr2 = {};
+    Integer[] intArr3 = {1, 2, 3, -1, -2, -3, 4};
+    Integer[] intArr4 = {-1, -2, -3, 0, -4, 0};
+    Comparator<Integer> integerComparator = Comparator.naturalOrder();
+    t.checkExpect(maximum(intArr1, integerComparator), 3);
+    t.checkExpect(maximum(intArr2, integerComparator), null);
+    t.checkExpect(maximum(intArr3, integerComparator), 4);
+    t.checkExpect(maximum(intArr4, integerComparator), 0);
+
+    String[] strArr1 = {"a", "b", "c"};
+    String[] strArr2 = {};
+    String[] strArr3 = {"z", "d", "q", "Z"};
+    String[] strArr4 = {"A", "B", "C", "I"};
+    Comparator<String> stringComparator = Comparator.naturalOrder();
+    t.checkExpect(maximum(strArr1, stringComparator), "c");
+    t.checkExpect(maximum(strArr2, stringComparator), null);
+    t.checkExpect(maximum(strArr3, stringComparator), "z");
+    t.checkExpect(maximum(strArr4, stringComparator), "I");
+
+    Boolean[] boolArr1 = {true, false, true};
+    Boolean[] boolArr2 = {};
+    Boolean[] boolArr3 = {false, false, false};
+    Boolean[] boolArr4 = {true, true, true};
+    Comparator<Boolean> booleanComparator = Comparator.naturalOrder();
+    t.checkExpect(maximum(boolArr1, booleanComparator), true);
+    t.checkExpect(maximum(boolArr2, booleanComparator), null);
+    t.checkExpect(maximum(boolArr3, booleanComparator), false);
+    t.checkExpect(maximum(boolArr4, booleanComparator), true);
+  }
+
+  <E> List<E> lesserThan(List<E> elst, Comparator<E> comparator, E element) {
+    List<E> output = new ArrayList<>();
+    for (E elem : elst) {
+      if (comparator.compare(elem, element) < 0) {
+        output.add(elem);
+      }
+    }
+    return output;
+  }
+  
+  void testLesserThan(Tester t) {
+  
+    ArrayList<Integer> intList = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 6, 7));
+    Comparator<Integer> intComparator = Comparator.naturalOrder();
+    t.checkExpect(lesserThan(intList, intComparator, 4), Arrays.asList(1, 2, 3));
+  
+    
+    ArrayList<String> strList = new ArrayList<>(Arrays.asList("apple", "banana", "grape", "orange"));
+    Comparator<String> strComparator = Comparator.naturalOrder();
+    t.checkExpect(lesserThan(strList, strComparator, "orange"), Arrays.asList("apple", "banana", "grape"));
+  
+    
+    ArrayList<Boolean> boolList = new ArrayList<>(Arrays.asList(true, false, true, false, true));
+    Comparator<Boolean> boolComparator = Comparator.naturalOrder();
+    t.checkExpect(lesserThan(boolList, boolComparator, true), Arrays.asList(false, false));
+  }
+
+  <E> boolean inOrder(List<E> lst, Comparator<E> comparator) {
+    if (lst.isEmpty() || lst.size() == 1) {
+      return true;
+    }
+
+    for (int i = 0; i < lst.size() - 1; i++) {
+      E current = lst.get(i);
+      E next = lst.get(i + 1);
+
+      if (current.equals(null) || next.equals(null)) {
+        throw new IllegalArgumentException("null value in list");
+      }
+
+      if (current.equals(next) || comparator.compare(current, next) > 0) {
+        return false;
+      }
+    }
+    return true;
+}
+
+  void testInOrder(Tester t) {
+    ArrayList<Integer> intList1 = new ArrayList<>(Arrays.asList(1, 2, 3, 4));
+    ArrayList<Integer> intList2 = new ArrayList<>();
+    ArrayList<Integer> intList3 = new ArrayList<>(Arrays.asList(5, 4, 3, 2, 1));
+    ArrayList<Integer> intList4 = new ArrayList<>(Arrays.asList(1));
+    ArrayList<Integer> intList5 = new ArrayList<>(Arrays.asList(1,1,1,1));
+    Comparator<Integer> integerComparator = Comparator.naturalOrder();
+    t.checkExpect(inOrder(intList1, integerComparator), true);
+    t.checkExpect(inOrder(intList2, integerComparator), true);
+    t.checkExpect(inOrder(intList3, integerComparator), false);
+    t.checkExpect(inOrder(intList4, integerComparator), true);
+    t.checkExpect(inOrder(intList5, integerComparator), false);
+
+    ArrayList<String> strList1 = new ArrayList<>(Arrays.asList("apple", "banana", "orange"));
+    ArrayList<String> strList2 = new ArrayList<>();
+    ArrayList<String> strList3 = new ArrayList<>(Arrays.asList("orange", "banana", "apple"));
+    ArrayList<String> strList4 = new ArrayList<>(Arrays.asList("pear"));
+    Comparator<String> stringComparator = Comparator.naturalOrder();
+    t.checkExpect(inOrder(strList1, stringComparator), true);
+    t.checkExpect(inOrder(strList2, stringComparator), true);
+    t.checkExpect(inOrder(strList3, stringComparator), false);
+    t.checkExpect(inOrder(strList4, stringComparator), true);
+
+    ArrayList<Boolean> boolList1 = new ArrayList<>(Arrays.asList(true, true, true));
+    ArrayList<Boolean> boolList2 = new ArrayList<>();
+    ArrayList<Boolean> boolList3 = new ArrayList<>(Arrays.asList(true, false, true));
+    ArrayList<Boolean> boolList4 = new ArrayList<>(Arrays.asList(false, false, false));
+    Comparator<Boolean> booleanComparator = Comparator.naturalOrder();
+    t.checkExpect(inOrder(boolList1, booleanComparator), false);
+    t.checkExpect(inOrder(boolList2, booleanComparator), true);
+    t.checkExpect(inOrder(boolList3, booleanComparator), false);
+    t.checkExpect(inOrder(boolList4, booleanComparator), false);
+  }
+
+  <E> boolean inOrder(E[] eArr, Comparator<E> comparator) {
+
+    if (eArr.length <= 1) {
+      return true;
+    }
+
+    for (int i = 0; i < eArr.length - 1; i++) {
+      E curr = eArr[i];
+      E next = eArr[i + 1];
+
+      if (curr == null || next == null) {
+        throw new IllegalArgumentException("null value in array");
+      }
+
+      if (curr.equals(next) || comparator.compare(curr, next) > 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  void testInOrderArray(Tester t) {
+    
+    Integer[] intArr1 = {1, 2, 3, 4, 5};
+    Integer[] intArr2 = {};
+    Integer[] intArr3 = {5, 4, 3, 2, 1};
+    Integer[] intArr4 = {1};
+    Integer[] intArr5 = {1, 1, 1, 1}; 
+    t.checkExpect(inOrder(intArr1, Comparator.naturalOrder()), true);
+    t.checkExpect(inOrder(intArr2, Comparator.naturalOrder()), true);
+    t.checkExpect(inOrder(intArr3, Comparator.naturalOrder()), false);
+    t.checkExpect(inOrder(intArr4, Comparator.naturalOrder()), true);
+    t.checkExpect(inOrder(intArr5, Comparator.naturalOrder()), false);
+
+    String[] strArr1 = {"apple", "banana", "grape", "orange"};
+    String[] strArr2 = {};
+    String[] strArr3 = {"orange", "grape", "banana", "apple"};
+    String[] strArr4 = {"pear"};
+    String[] strArr5 = {"apple", "banana", "banana", "orange"}; 
+    t.checkExpect(inOrder(strArr1, Comparator.naturalOrder()), true);
+    t.checkExpect(inOrder(strArr2, Comparator.naturalOrder()), true);
+    t.checkExpect(inOrder(strArr3, Comparator.naturalOrder()), false);
+    t.checkExpect(inOrder(strArr4, Comparator.naturalOrder()), true);
+    t.checkExpect(inOrder(strArr5, Comparator.naturalOrder()), false);
+    
+    Boolean[] boolArr1 = {true, true, true, true};
+    Boolean[] boolArr2 = {};
+    Boolean[] boolArr3 = {true, false, true};
+    Boolean[] boolArr4 = {false, false, false};
+    Boolean[] boolArr5 = {true, false, false, true}; 
+    t.checkExpect(inOrder(boolArr1, Comparator.naturalOrder()), false);
+    t.checkExpect(inOrder(boolArr2, Comparator.naturalOrder()), true);
+    t.checkExpect(inOrder(boolArr3, Comparator.naturalOrder()), false);
+    t.checkExpect(inOrder(boolArr4, Comparator.naturalOrder()), false);
+    t.checkExpect(inOrder(boolArr5, Comparator.naturalOrder()), false);
+  }
 }

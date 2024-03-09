@@ -310,4 +310,36 @@ class CompareLists {
     t.checkExpect(inOrder(boolArr4, Comparator.naturalOrder()), false);
     t.checkExpect(inOrder(boolArr5, Comparator.naturalOrder()), false);
   }
+
+  <E> List<E> merge(Comparator<E> comparator, List<E> lst1, List<E> lst2) {
+    List<E> merged = new ArrayList<>(lst1.size() + lst2.size());
+    for (E elem : lst1) {
+      if (elem == null) {
+        throw new IllegalArgumentException("null value in first list");
+      } else {
+        merged.add(elem);
+      }
+    } 
+    for (E elem : lst2) {
+      if (elem == null) {
+        throw new IllegalArgumentException("null value in second list");
+      } else {
+        merged.add(elem);
+      }
+    }
+    merged.sort(comparator);
+    return merged;
+  }
+
+  void testMerged(Tester t) {
+    List<Integer> l1 = Arrays.asList(1,0,3,5);
+    List<Integer> l2 = Arrays.asList(1,2,3,4);
+    List<Integer> l3 = Arrays.asList(-1, 8);
+    List<Integer> l4 = Arrays.asList(4,5,6,-2);
+    List<Integer> l5 = Arrays.asList(4,5,null,-2);
+    Comparator<Integer> intComparator = Comparator.naturalOrder();
+    t.checkExpect(merge(intComparator, l1, l2), new ArrayList<>(Arrays.asList(0,1,1,2,3,3,4,5)));
+    t.checkExpect(merge(intComparator, l3, l4), new ArrayList<>(Arrays.asList(-2,-1,4,5,6,8)));
+    t.checkException(new IllegalArgumentException("null value in first list"), this, "merge", merge(intComparator, l5, l3));
+  }
 }

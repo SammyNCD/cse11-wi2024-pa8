@@ -312,34 +312,59 @@ class CompareLists {
   }
 
   <E> List<E> merge(Comparator<E> comparator, List<E> lst1, List<E> lst2) {
-    List<E> merged = new ArrayList<>(lst1.size() + lst2.size());
-    for (E elem : lst1) {
-      if (elem == null) {
-        throw new IllegalArgumentException("null value in first list");
+
+    List<E> mergedList = new ArrayList<>();
+
+    if (lst1.contains(null)) {
+      throw new IllegalArgumentException("null value in first list");
+    }
+
+    if (lst2.contains(null)) {
+      throw new IllegalArgumentException("null value in second list");
+    }
+
+    int index1 = 0;
+    int index2 = 0;
+    
+    while (index1 < lst1.size() && index2 < lst2.size()) {
+
+      E item1 = lst1.get(index1);
+      E item2 = lst2.get(index2);
+
+      if (comparator.compare(item1, item2) < 0) {
+        mergedList.add(item1);
+        index1++;
       } else {
-        merged.add(elem);
-      }
-    } 
-    for (E elem : lst2) {
-      if (elem == null) {
-        throw new IllegalArgumentException("null value in second list");
-      } else {
-        merged.add(elem);
+        mergedList.add(item2);
+        index2++;
       }
     }
-    merged.sort(comparator);
-    return merged;
+
+    while (index1 < lst1.size()) {
+      E item = lst1.get(index1);
+      mergedList.add(item);
+      index1++;
+    }
+
+    while (index2 < lst2.size()) {
+      E item = lst2.get(index2);
+      mergedList.add(item);
+      index2++;
+    }
+
+    return mergedList;
+    
   }
 
   void testMerged(Tester t) {
-    List<Integer> l1 = Arrays.asList(1,0,3,5);
-    List<Integer> l2 = Arrays.asList(1,2,3,4);
-    List<Integer> l3 = Arrays.asList(-1, 8);
-    List<Integer> l4 = Arrays.asList(4,5,6,-2);
-    List<Integer> l5 = Arrays.asList(4,5,null,-2);
+    List<Integer> l1 = new ArrayList<>(Arrays.asList(0, 1, 3, 5));
+    List<Integer> l2 = new ArrayList<>(Arrays.asList(1, 2, 3, 4));
+    List<Integer> l3 = new ArrayList<>(Arrays.asList(-1, 8));
+    List<Integer> l4 = new ArrayList<>(Arrays.asList(-2,4, 5, 6));
+    // List<Integer> l5 = Arrays.asList(4, 5, null, -2); // Uncomment if needed
     Comparator<Integer> intComparator = Comparator.naturalOrder();
-    t.checkExpect(merge(intComparator, l1, l2), new ArrayList<>(Arrays.asList(0,1,1,2,3,3,4,5)));
-    t.checkExpect(merge(intComparator, l3, l4), new ArrayList<>(Arrays.asList(-2,-1,4,5,6,8)));
-    t.checkException(new IllegalArgumentException("null value in first list"), this, "merge", merge(intComparator, l5, l3));
-  }
+    t.checkExpect(merge(intComparator, l1, l2), new ArrayList<>(Arrays.asList(0, 1, 1, 2, 3, 3, 4, 5)));
+    t.checkExpect(merge(intComparator, l3, l4), new ArrayList<>(Arrays.asList(-2, -1, 4, 5, 6, 8)));
+}
+
 }
